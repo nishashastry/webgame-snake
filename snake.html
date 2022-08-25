@@ -35,9 +35,11 @@
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
         ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-        ////////////////////////////////////////////////////////////////////
+        /////////////////////////initial call///////////////////////////////////////////
 
         main();
+        createFood();
+
         //creating the snake//////////////////////////////////////
         function drawSnake() {
             snake.forEach(drawSnakeSquare)
@@ -61,14 +63,13 @@
             const UP_KEY = 38;
             const DOWN_KEY = 40;
 
-            const keyPressed = event.keyCode;
-            const moveUp = dy === -10;
-            const moveDown = dy === 10;
-            const moveRight = dx === 10;
-            const moveLeft = dx === -10;
+            var keyPressed = event.keyCode;
+            var moveUp = dy === -10;
+            var moveDown = dy === 10;
+            var moveRight = dx === 10;
+            var moveLeft = dx === -10;
 
             //check to see if the snake is moving in the opposite direction of the pressed key because the snake should not reverse
-
             if (keyPressed === LEFT_KEY && !moveRight) {
                 dx = -10;
                 dy = 0;
@@ -113,6 +114,7 @@
             //call drawSnake everytime we advanceSnake to show the snake is "moving"
             setTimeout(function onTick() {
                 clearCanvas();
+                drawFood();
                 moveSnake();
                 drawSnake();
 
@@ -124,6 +126,38 @@
 
         document.addEventListener("keydown", changeDirection);  //keydown vs keypress: keydown used for any key, keypress used typically for characters (like typing)
 
+        //////creating food////////////////////////////////////////
+        function randomNum(min, max) {
+            var num;
+            num = Math.round((Math.random() * (max - min) + min) / 10) * 10;
+
+            return num;
+        }
+
+        function createFood() {
+            foodX = randomNum(0, gameCanvas.width - 10);
+            foodY = randomNum(0, gameCanvas.height - 10);
+
+            snake.forEach(function isFoodOnSnake(part) {
+                var foodIsOnSnake = false;
+
+                if (part.x == foodX && part.y == foodY) {
+                    foodIsOnSnake = true;
+                }
+                if (foodIsOnSnake == false) {
+                    createFood();
+                }
+            });
+
+        }
+
+        function drawFood() {
+            ctx.fillStyle = 'red';
+            ctx.strokestyle = 'darkred';
+            ctx.fillRect(foodX, foodY, 10, 10);
+            ctx.strokeRect(foodX, foodY, 10, 10);
+
+        }
 
     </script>
 </body>
