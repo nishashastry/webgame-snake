@@ -1,2 +1,130 @@
 <!DOCTYPE html>
-<body></body>
+<html>
+<head>
+    <title>Snake Game</title>
+</head>
+<body>
+    <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+    <script>
+        /** CONSTANTS **/
+        const CANVAS_BORDER_COLOR = 'black';
+        const CANVAS_BACKGROUND_COLOR = "white";
+        const SNAKE_COLOR = 'lightgreen';
+        const SNAKE_BORDER = 'darkgreen';
+
+        let snake = [
+            { x: 150, y: 150 },
+            { x: 140, y: 150 },
+            { x: 130, y: 150 },
+            { x: 120, y: 150 },
+            { x: 110, y: 150 }
+        ]
+
+        let dx = 10;
+        let dy = 0;
+
+        //creatng the board////////////////////////////////////////////
+        var gameCanvas = document.getElementById("gameCanvas");
+
+        var ctx = gameCanvas.getContext("2d");
+
+        ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
+        ctx.strokestyle = CANVAS_BORDER_COLOR;
+
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+        ////////////////////////////////////////////////////////////////////
+
+        main();
+        //creating the snake//////////////////////////////////////
+        function drawSnake() {
+            snake.forEach(drawSnakeSquare)
+        }
+
+
+        function drawSnakeSquare(snakeSquare) {
+            ctx.fillStyle = SNAKE_COLOR;
+
+            ctx.strokestyle = SNAKE_BORDER;
+
+            ctx.fillRect(snakeSquare.x, snakeSquare.y, 10, 10);
+
+            ctx.strokeRect(snakeSquare.x, snakeSquare.y, 10, 10);
+        }
+
+        ///////////////changing snake direction//////////////////////
+        function changeDirection(event) {
+            const LEFT_KEY = 37;
+            const RIGHT_KEY = 39;
+            const UP_KEY = 38;
+            const DOWN_KEY = 40;
+
+            const keyPressed = event.keyCode;
+            const moveUp = dy === -10;
+            const moveDown = dy === 10;
+            const moveRight = dx === 10;
+            const moveLeft = dx === -10;
+
+            //check to see if the snake is moving in the opposite direction of the pressed key because the snake should not reverse
+
+            if (keyPressed === LEFT_KEY && !moveRight) {
+                dx = -10;
+                dy = 0;
+            }
+
+            if (keyPressed === RIGHT_KEY && !moveLeft) {
+                dx = 10;
+                dy = 0;
+            }
+
+            if (keyPressed === UP_KEY && !moveDown) {
+                dx = 0;
+                dy = -10;
+            }
+
+            if (keyPressed === DOWN_KEY && !moveUp) {
+                dx = 0;
+                dy = 10;
+            }
+
+        }
+        /////////////////////move the snake////////////////////////////////////////
+
+        function moveSnake() {
+            const head = { x: snake[0].x + dx, y: snake[0].y+ dy };
+
+            snake.unshift(head);//adds new sqaure to the front of the snake
+
+            snake.pop();//removes the tail end sqaure of the snake
+        }
+
+        function clearCanvas() {
+            ctx.fillStyle = 'white';
+            ctx.strokestyle = "black";
+
+            ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+        }
+
+        function main(){
+            //call drawSnake everytime we advanceSnake to show the snake is "moving"
+            setTimeout(function onTick() {
+                clearCanvas();
+                moveSnake();
+                drawSnake();
+
+                main();//class itself to keep the movement infinite
+
+            }, 100); //delays 100 milliseconds between each
+
+        }
+
+        document.addEventListener("keydown", changeDirection);  //keydown vs keypress: keydown used for any key, keypress used typically for characters (like typing)
+
+
+    </script>
+</body>
+</html>
