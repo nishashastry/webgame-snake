@@ -38,7 +38,8 @@
         /////////////////////////initial call///////////////////////////////////////////
 
         main();
-        createFood();
+        document.addEventListener("keydown", changeDirection);  //keydown vs keypress: keydown used for any key, keypress used typically for characters (like typing)
+
 
         //creating the snake//////////////////////////////////////
         function drawSnake() {
@@ -94,7 +95,7 @@
         /////////////////////move the snake////////////////////////////////////////
 
         function moveSnake() {
-            const head = { x: snake[0].x + dx, y: snake[0].y+ dy };
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
             snake.unshift(head);//adds new sqaure to the front of the snake
 
@@ -110,11 +111,11 @@
 
         }
 
-        function main(){
+        function main() {
             //call drawSnake everytime we advanceSnake to show the snake is "moving"
             setTimeout(function onTick() {
                 clearCanvas();
-                drawFood();
+                
                 moveSnake();
                 drawSnake();
 
@@ -124,40 +125,9 @@
 
         }
 
-        document.addEventListener("keydown", changeDirection);  //keydown vs keypress: keydown used for any key, keypress used typically for characters (like typing)
 
         //////creating food////////////////////////////////////////
-        function randomNum(min, max) {
-            var num;
-            num = Math.round((Math.random() * (max - min) + min) / 10) * 10;
-
-            return num;
-        }
-
-        function createFood() {
-            foodX = randomNum(0, gameCanvas.width - 10);
-            foodY = randomNum(0, gameCanvas.height - 10);
-
-            snake.forEach(function isFoodOnSnake(part) {
-                var foodIsOnSnake = false;
-
-                if (part.x == foodX && part.y == foodY) {
-                    foodIsOnSnake = true;
-                }
-                if (foodIsOnSnake == false) {
-                    createFood();
-                }
-            });
-
-        }
-
-        function drawFood() {
-            ctx.fillStyle = 'red';
-            ctx.strokestyle = 'darkred';
-            ctx.fillRect(foodX, foodY, 10, 10);
-            ctx.strokeRect(foodX, foodY, 10, 10);
-
-        }
+        
 
     </script>
 </body>
