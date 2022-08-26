@@ -23,6 +23,8 @@
 
         let dx = 10;
         let dy = 0;
+        let foodX = 0;
+        let foodY = 0;
 
         //creatng the board////////////////////////////////////////////
         var gameCanvas = document.getElementById("gameCanvas");
@@ -36,7 +38,7 @@
         ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
 
         /////////////////////////initial call///////////////////////////////////////////
-
+        createFood();
         main();
         document.addEventListener("keydown", changeDirection);  //keydown vs keypress: keydown used for any key, keypress used typically for characters (like typing)
 
@@ -115,10 +117,10 @@
             //call drawSnake everytime we advanceSnake to show the snake is "moving"
             setTimeout(function onTick() {
                 clearCanvas();
-                
+                drawFood();
                 moveSnake();
                 drawSnake();
-
+                createFood();
                 main();//class itself to keep the movement infinite
 
             }, 100); //delays 100 milliseconds between each
@@ -127,8 +129,27 @@
 
 
         //////creating food////////////////////////////////////////
-        
+        function randomTen(min, max) {
+            return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+        }
+        function createFood() {
+           // foodX = randomTen(0, gameCanvas.width - 10);
+           // foodY = randomTen(0, gameCanvas.height - 10);
+           
+                const foodIsOnSnake = snake[0].x == foodX && snake[0].y == foodY
+            if (foodIsOnSnake) {
+                // createFood();
+                foodX = randomTen(0, gameCanvas.width - 10);
+                foodY = randomTen(0, gameCanvas.height - 10);
+            }
+        }
 
+        function drawFood() {
+            ctx.fillStyle = 'red';
+            ctx.strokestyle = 'darkred';
+            ctx.fillRect(foodX, foodY, 10, 10);
+            ctx.strokeRect(foodX, foodY, 10, 10);
+        }
     </script>
 </body>
 </html>
