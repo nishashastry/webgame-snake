@@ -4,10 +4,11 @@
     <title>Snake Game</title>
 </head>
 <body>
+    <div id="score">0</div>
     <canvas id="gameCanvas" width="300" height="300"></canvas>
 
     <script>
-        /** CONSTANTS **/
+
         const CANVAS_BORDER_COLOR = 'black';
         const CANVAS_BACKGROUND_COLOR = "white";
         const SNAKE_COLOR = 'lightgreen';
@@ -23,8 +24,8 @@
 
         let dx = 10;
         let dy = 0;
-        let foodX = 0;
-        let foodY = 0;
+        let score = 0;
+       
 
         //creatng the board////////////////////////////////////////////
         var gameCanvas = document.getElementById("gameCanvas");
@@ -94,14 +95,22 @@
             }
 
         }
-        /////////////////////move the snake////////////////////////////////////////
 
+        /////////////////////move the snake////////////////////////////////////////
         function moveSnake() {
             const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
             snake.unshift(head);//adds new sqaure to the front of the snake
 
-            snake.pop();//removes the tail end sqaure of the snake
+            const ateFood = snake[0].x === foodX && snake[0].y === foodY;
+            if (ateFood) {
+                score++;
+                document.getElementById("score").innerHTML = score; // change the html content of the thing that has the id score to whatever is contained in the score variable
+                createFood();
+            } else {
+                snake.pop();//removes the tail end sqaure of the snake
+            }
+            
         }
 
         function clearCanvas() {
@@ -114,13 +123,14 @@
         }
 
         function main() {
+            if (endGame()) return;
             //call drawSnake everytime we advanceSnake to show the snake is "moving"
             setTimeout(function onTick() {
                 clearCanvas();
                 drawFood();
                 moveSnake();
                 drawSnake();
-                createFood();
+                
                 main();//class itself to keep the movement infinite
 
             }, 100); //delays 100 milliseconds between each
@@ -129,19 +139,19 @@
 
 
         //////creating food////////////////////////////////////////
-        function randomTen(min, max) {
+        function randomNum(min, max) {
             return Math.round((Math.random() * (max - min) + min) / 10) * 10;
         }
+
         function createFood() {
-           // foodX = randomTen(0, gameCanvas.width - 10);
-           // foodY = randomTen(0, gameCanvas.height - 10);
-           
-                const foodIsOnSnake = snake[0].x == foodX && snake[0].y == foodY
-            if (foodIsOnSnake) {
-                // createFood();
-                foodX = randomTen(0, gameCanvas.width - 10);
-                foodY = randomTen(0, gameCanvas.height - 10);
-            }
+            foodX = randomNum(0, gameCanvas.width - 10);
+            foodY = randomNum(0, gameCanvas.height - 10);
+            snake.forEach(function isFoodOnSnake(part) {
+                const foodIsOnSnake = part.x == foodX && part.y == foodY
+                if (foodIsOnSnake == true) {
+                    createFood();
+                }
+            });
         }
 
         function drawFood() {
@@ -150,6 +160,26 @@
             ctx.fillRect(foodX, foodY, 10, 10);
             ctx.strokeRect(foodX, foodY, 10, 10);
         }
+
+        //////////////////////end the game///////////////////////////////
+        function endGame() {
+            for (let i = 4; i < snake.length; i++) {
+                const snakeCollided = snake[i].x === snake[0].x && snake[i].y === snake[0].y;
+                if (snakeCollided) return true
+            }
+
+            const hitLeftWall = snake[0].x < 0;
+            const hitRightWall = snake[0].x > gameCanvas.width - 10;
+            const hitTopWall = snake[0].y < 0;
+            const hitBottomWall = snake[0].y > gameCanvas.height - 10;
+
+            return hitLeftWall ||
+                hitRightWall ||
+                hitTopWall ||
+                hitBottomWall;
+
+        } 
+
     </script>
 </body>
 </html>
