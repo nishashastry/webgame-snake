@@ -1,4 +1,4 @@
-# Retro Snake Game 🐍
+# Retro Snake Web Game 🐍
 Simple online webgame inspired by the classic snake game
 
 ## What it does 🖥
